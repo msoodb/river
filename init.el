@@ -1,3 +1,5 @@
+(load-theme 'tango-dark)
+
 (setq inhibit-startup-message t)
 
 (require 'package)
