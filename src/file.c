@@ -3,26 +3,24 @@
 
 int main(int argc, char *argv[])
 {
-  FILE *fptr = NULL;
-  fptr = fopen("list.text", "w");
-  if (fptr == NULL) {
-    printf("%s\n", "error!");
+  FILE *fp = fopen("file.text", "w");
+  if (fp == NULL) {
+    printf("%s\n", "error open file!");
     exit(1);
   }
-  fprintf(fptr, "%s\n", "Hello File!.");
-  fclose(fptr);
-
-  printf("%s\n", "---------------------");
-  FILE *fp = fopen("list.text", "r");
+  fprintf(fp, "%s", "Hello File!.\n");
+  fclose(fp);
+  
+  fp = fopen("file.text", "r");
   if (fp == NULL) {
-    printf("%s\n", "error!");
+    printf("%s\n", "error open file!");
     exit(1);
   }
   char ch;
-  while (fscanf(fp, "%c", &ch) != EOF ) {
-    printf("%c\n", ch);
+  while (fscanf(fp, "%c", &ch) != EOF) {
+    printf("%c.", ch);    
   }
+  printf("\n");
   fclose(fp);
-
   return 0;
 }
