@@ -7,7 +7,18 @@ typedef struct
   int id;
   char *name;
   char *lastname;  
-} student;
+}student;
+
+student * initStudent(){
+  student *st = NULL;
+  st = (student *)malloc(sizeof(student));
+  if (st == NULL) {
+    return NULL;
+  }
+  st->name = (char *)malloc(sizeof(char) * 20);
+  st->lastname = (char *)malloc(sizeof(char) * 30);
+  return st;
+}
 
 int main(int argc, char *argv[])
 {
@@ -29,15 +40,12 @@ int main(int argc, char *argv[])
     printf("out of memory\n");
     exit(1);
   }
-  student *new = NULL;
-  new = malloc(sizeof(student));
+  student *new = initStudent();
   if (new == NULL) {
     printf("out of memory\n");    
     exit(1);
   }
   new->id = 1;
-  new->name = (char *)malloc(sizeof(char) * 20);
-  new->lastname  = (char *)malloc(sizeof(char) * 30);
   strcpy(new->name, "masoud");
   strcpy(new->lastname, "bolhassani");
   fprintf(fpStudent, "%d", new->id);
