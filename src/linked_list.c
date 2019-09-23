@@ -16,11 +16,7 @@ void push(struct node** ptrhead, int data)
 	}
 
 	tmp->data = data;
-	tmp->next = NULL;
-
-	if (*ptrhead != NULL) {
-		tmp->next = *ptrhead;
-	}	
+	tmp->next = *ptrhead;
 	*ptrhead = tmp;
 }
 
@@ -47,8 +43,13 @@ void insert(struct node** ptrhead, int position, int data)
 	tmp2->next = tmp;
 }
 
-int pop(struct node** head)
+int pop(struct node** ptrhead, int *data)
 {
+	if(ptrhead == NULL)
+		return 0;
+	*data = (*ptrhead)->data;
+	*ptrhead = (*ptrhead)->next;
+	
 }
 
 void print(struct node* head)
@@ -62,6 +63,8 @@ void print(struct node* head)
 	printf("\n");
 }
 
+
+
 int main(int argc, char *argv[])
 {
 	struct node* numbers = NULL;
@@ -73,8 +76,11 @@ int main(int argc, char *argv[])
 	insert(&numbers,3, 99);
 	print(numbers);
 
-	//printf("pop: %d\n", pop(numbers));
-	//printf("pop: %d\n", pop(numbers));	
-	//print(numbers);
+	int a;
+	pop(&numbers, &a);
+	printf("pop: %d\n", a);	
+	print(numbers);
+	
+	free(numbers);
 	return 0;
 }
