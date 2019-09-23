@@ -16,15 +16,21 @@ void push(struct node *head, int data)
 		return;
 	}
 	tmp->data = data;
-	tmp->next = NULL;
-
+	
 	/* insert tmp node in list */
 	tmp->next = head->next;
 	head->next = tmp;
-
+	
 	/* return tmp node */
 	return;
-};
+}
+
+int pop(struct node* head)
+{
+	struct node *tmp = head->next;
+	head->next = tmp->next;
+	return tmp->data;	
+}
 
 int print(struct node* head)
 {
@@ -52,5 +58,8 @@ int main(int argc, char *argv[])
 	push(numbers, 98);
 	push(numbers, 42);
 	print(numbers);
+	printf("pop: %d\n", pop(numbers));
+	printf("pop: %d\n", pop(numbers));
+	printf("pop: %d\n", pop(numbers));
 	return 0;
 }
