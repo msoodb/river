@@ -7,59 +7,74 @@ struct node
 	struct node *next;
 };
 
-void push(struct node *head, int data)
-{	
-	/* create tmp node */
-	struct node *tmp = (struct node *)malloc(sizeof(struct node));
+void push(struct node** ptrhead, int data)
+{		
+	struct node* tmp = (struct node*)malloc(sizeof(struct node));
+	if (tmp == NULL) {
+		printf("%s\n", "out of memory!");
+		return;
+	}
+
+	tmp->data = data;
+	tmp->next = NULL;
+
+	if (*ptrhead != NULL) {
+		tmp->next = *ptrhead;
+	}	
+	*ptrhead = tmp;
+}
+
+void insert(struct node** ptrhead, int position, int data)
+{
+	struct node* tmp = (struct node*)malloc(sizeof(struct node));
 	if (tmp == NULL) {
 		printf("%s\n", "out of memory!");
 		return;
 	}
 	tmp->data = data;
+	tmp->next = NULL;
 	
-	/* insert tmp node in list */
-	tmp->next = head->next;
-	head->next = tmp;
-	
-	/* return tmp node */
-	return;
-}
-
-int pop(struct node* head)
-{
-	struct node *tmp = head->next;
-	head->next = tmp->next;
-	return tmp->data;	
-}
-
-int print(struct node* head)
-{
-	if(head == NULL){
-		return 0;
+	if (position == 1) {
+		tmp->next = *ptrhead;
+		*ptrhead = tmp;
+		return;
 	}
-	struct node* tmp = head->next;
+	struct node *tmp2 = *ptrhead;
+	for (int i = 0; i < position-2; ++i) {
+		tmp2 = tmp2->next;			
+	}
+	tmp->next = tmp2->next;
+	tmp2->next = tmp;
+}
+
+int pop(struct node** head)
+{
+}
+
+void print(struct node* head)
+{		
 	do
 	{
-		printf("%d\n", tmp->data);
-		tmp = tmp->next;
+		printf("%d ", head->data);
+		head = head->next;
 		
-	} while (tmp != NULL);	
+	} while (head != NULL);
+	printf("\n");
 }
 
 int main(int argc, char *argv[])
 {
-	struct node *numbers = NULL;
-	numbers  = (struct node *)malloc(sizeof(struct node));
-	if (numbers == NULL) {
-		printf("%s\n", "out of memory!");
-		return 1;
-	}
-	push(numbers, 14);
-	push(numbers, 98);
-	push(numbers, 42);
+	struct node* numbers = NULL;
+	
+	push(&numbers, 14);
+	push(&numbers, 98);
+	push(&numbers, 42);
 	print(numbers);
-	printf("pop: %d\n", pop(numbers));
-	printf("pop: %d\n", pop(numbers));
-	printf("pop: %d\n", pop(numbers));
+	insert(&numbers,3, 99);
+	print(numbers);
+
+	//printf("pop: %d\n", pop(numbers));
+	//printf("pop: %d\n", pop(numbers));	
+	//print(numbers);
 	return 0;
 }
