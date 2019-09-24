@@ -106,17 +106,34 @@ void serialize(struct node *head, char *file)
 
 void serialize_binary(struct node *head, char *file)
 {
-	FILE *fp = fopen(file, "w");
-	if (fp == NULL) {
-		printf("error file : %s\n", file);
-		return;
-	}
+	/* FILE *fp = fopen(file, "wb"); */
+	/* if (fp == NULL) { */
+	/* 	printf("error file : %s\n", file); */
+	/* 	return; */
+	/* } */
 	
-	while (head != NULL) {
-		fwrite(head, sizeof(struct node), 1, fp);
-		head = head->next;
-	}
-	fclose(fp);
+	/* while (head != NULL) { */
+	/* 	fwrite(&(head->data_c->id), sizeof(int), 1, fp); */
+	/* 	head = head->next; */
+	/* } */
+	/* fclose(fp); */
+}
+
+void deserialize_binary(struct node **ptrhead, char *file)
+{
+	/* FILE *fp = fopen(file, "rb"); */
+	/* if (fp == NULL) { */
+	/* 	printf("error file : %s\n", file); */
+	/* 	return; */
+	/* } */
+
+	/* struct data *student = (struct data *)malloc(sizeof(struct data *));	 */
+	
+	/* while ( != NULL) { */
+	/* 	fread(&(data_c->id), sizeof(int), 1, fp); */
+	/* 	head = head->next; */
+	/* } */
+	/* fclose(fp); */
 }
 
 void print(struct node *ptrhead)
@@ -150,12 +167,13 @@ void init(struct node **ptrhead)
 int help()
 {
 	printf("\n");
-	printf("init : kinitialize list\n");
-	printf("push : push to list\n");
-	printf("print : print entire list\n");
-	printf("save : save list on file\n");
-	printf("help : show help\n");
-	printf("q | Q: quit\n");
+	printf("  init : initialize list\n");
+	printf("  push : push to list\n");
+	printf("   pop : pop from list\n");
+	printf(" print : print entire list\n");
+	printf("  save : save list on file\n");
+	printf("  help : show help\n");
+	printf("   q/Q : quit\n");
 	printf("\n");
 }
 
@@ -163,7 +181,7 @@ int main(int argc, char *argv[])
 {
 	printf("river:& ");
 	struct node *students = NULL;
-	struct data *student4;
+	struct data *student;
 	
 	char cmd[BUFFER_SIZE];
 	fgets(cmd, BUFFER_SIZE, stdin);
@@ -171,10 +189,14 @@ int main(int argc, char *argv[])
 	while (cmd != "q" && cmd != "Q") {		
 		if (strcmp(cmd, "init") == 0) {
 			init(&students);
+		}else if (strcmp(cmd, "push") == 0) {
+			;
+		}else if (strcmp(cmd, "pop") == 0) {
+			student = pop(&students);
 		}else if (strcmp(cmd, "print") == 0) {
 			print(students);
 		}else if (strcmp(cmd, "save") == 0) {
-			serialize_binary(students, "students.dat");
+			serialize(students, "students.txt");
 		}else if (strcmp(cmd, "help") == 0) {			
 			help();
 		}else if ((strcmp(cmd, "q") == 0) || (strcmp(cmd, "Q") == 0)) {
