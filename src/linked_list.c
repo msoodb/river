@@ -10,7 +10,7 @@ struct data
 	int status;
 };
 
-struct data* createStudent(int id, char *name, char *lastname, char *addres, int status)
+struct data* create_student(int id, char *name, char *lastname, char *addres, int status)
 {
 	struct data *tmp = (struct data*) malloc(sizeof(struct data));
 	if(tmp == NULL){
@@ -26,7 +26,7 @@ struct data* createStudent(int id, char *name, char *lastname, char *addres, int
 	return tmp;
 }
 
-void printStudentHeader()
+void print_student_header()
 {
 	printf("%-6s", "id");
 	printf("%-20s", "name");
@@ -38,7 +38,7 @@ void printStudentHeader()
 	printf("\n");
 }
 
-void printStudent(struct data *student)
+void print_student(struct data *student)
 {
 	printf("%-6d", student->id);
 	printf("%-20s", student->name);
@@ -72,14 +72,14 @@ void push(struct node **ptrhead, struct data *data)
 
 }
 
-void pop(struct node **ptrhead, struct data *data)
+struct data* pop(struct node **ptrhead)
 {
 	if (*ptrhead == NULL) {
-		data = NULL;
-		return;
+		return NULL;
 	}
-	data = (*ptrhead)->data_c;
-	*ptrhead = (*ptrhead)->next;	
+	struct data *data = (*ptrhead)->data_c;
+	*ptrhead = (*ptrhead)->next;
+	return data;
 }
 void serialize(struct node *head, char *file)
 {
@@ -101,35 +101,59 @@ void serialize(struct node *head, char *file)
 	fclose(fp);
 }
 
+void serialize_binary(struct node *head, char *file)
+{
+	FILE *fp = fopen(file, "w");
+	if (fp == NULL) {
+		printf("error file : %s\n", file);
+		return;
+	}
+	
+	while (head != NULL) {
+		fwrite(head, sizeof(struct node), 1, fp);
+		head = head->next;
+	}
+	fclose(fp);
+}
+
 void print(struct node *ptrhead)
 {
 	printf("\n");
-	printStudentHeader();
+	print_student_header();
 		
 	while (ptrhead != NULL) {
-		printStudent(ptrhead->data_c);
+		print_student(ptrhead->data_c);
 		ptrhead = ptrhead->next;
 	}
+}
+
+void init(struct node **ptrhead)
+{
+	/* create data and push*/
+	struct data *student;
+	student = create_student(101, "masoud", "bolhassani", "Tallinn Estonia", 1);
+	push(ptrhead, student);
+	
+	struct data *student2;
+	student2 = create_student(102, "mai", "volka", "Tallinn Estonia", 1);
+	push(ptrhead, student2);
+
+	struct data *student3;
+	student3 = create_student(103, "miloo", "volf", "Tallinn Estonia", 1);
+	push(ptrhead, student3);
 }
 
 int main(int argc, char *argv[])
 {
 	struct node *students = NULL;
+	init(&students);
+	
+	print(students);
+	serialize_binary(students, "students.dat");
+	
+	struct data *student4 = pop(&students);	
 
-	/* create data */
-	struct data *student;
-	student = createStudent(101, "masoud", "bolhassani", "Tallinn Estonia", 1);
-	push(&students, student);
-	struct data *student2;
-	student2 = createStudent(102, "mai", "volka", "Tallinn Estonia", 1);
-	push(&students, student2);
-	struct data *student3;
-	student3 = createStudent(103, "miloo", "volf", "Tallinn Estonia", 1);
-	push(&students, student3);
-	//serialize(students, "students.txt");
 	print(students);
-	struct data *student4;
-	pop(&students, student4);	
-	print(students);
+
 	return 0;
 }
