@@ -66,11 +66,32 @@ void push(struct node **ptrhead, struct data *data)
 	tmp->next = NULL;
 
 	if (*ptrhead != NULL) {
-		tmp->next = (*ptrhead)->next;		
+		tmp->next = (*ptrhead);		
 	}
 	*ptrhead = tmp;
 
 }
+
+void serialize(struct node *head, char *file)
+{
+	FILE *fp = fopen(file, "w");
+	if (fp == NULL) {
+		printf("error file : %s\n", file);
+		return;
+	}
+	
+	while (head != NULL) {
+		fprintf(fp, "%d,", head->data_c->id);
+		fprintf(fp, "%s,", head->data_c->name);
+		fprintf(fp, "%s,", head->data_c->lastname);
+		fprintf(fp, "%s,", head->data_c->addres);
+		fprintf(fp, "%d", head->data_c->status);		
+		fprintf(fp, "\n");
+		head = head->next;
+	}
+	fclose(fp);
+}
+
 void print(struct node *ptrhead)
 {
 	printStudentHeader();
@@ -87,8 +108,15 @@ int main(int argc, char *argv[])
 
 	/* create data */
 	struct data *student;
-	student = createStudent(101, "masoud", "bolhassani", "Tallinn, Estonia", 1);
+	student = createStudent(101, "masoud", "bolhassani", "Tallinn Estonia", 1);
 	push(&students, student);
-	print(students);
+	struct data *student2;
+	student2 = createStudent(102, "mai", "volka", "Tallinn Estonia", 1);
+	push(&students, student2);
+	struct data *student3;
+	student3 = createStudent(103, "miloo", "volf", "Tallinn Estonia", 1);
+	push(&students, student3);
+	serialize(students, "students.txt");
+	//print(students);
 	return 0;
 }
