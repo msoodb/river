@@ -72,6 +72,15 @@ void push(struct node **ptrhead, struct data *data)
 
 }
 
+void pop(struct node **ptrhead, struct data *data)
+{
+	if (*ptrhead == NULL) {
+		data = NULL;
+		return;
+	}
+	data = (*ptrhead)->data_c;
+	*ptrhead = (*ptrhead)->next;	
+}
 void serialize(struct node *head, char *file)
 {
 	FILE *fp = fopen(file, "w");
@@ -94,6 +103,7 @@ void serialize(struct node *head, char *file)
 
 void print(struct node *ptrhead)
 {
+	printf("\n");
 	printStudentHeader();
 		
 	while (ptrhead != NULL) {
@@ -116,7 +126,10 @@ int main(int argc, char *argv[])
 	struct data *student3;
 	student3 = createStudent(103, "miloo", "volf", "Tallinn Estonia", 1);
 	push(&students, student3);
-	serialize(students, "students.txt");
-	//print(students);
+	//serialize(students, "students.txt");
+	print(students);
+	struct data *student4;
+	pop(&students, student4);	
+	print(students);
 	return 0;
 }
