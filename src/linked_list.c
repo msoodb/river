@@ -164,6 +164,17 @@ void init(struct node **ptrhead)
 	push(ptrhead, student3);
 }
 
+void free_list(struct node **ptrhead)
+{
+	struct node *tmp;
+	while (*ptrhead != NULL){
+		tmp = *ptrhead;
+		*ptrhead = (*ptrhead)->next;
+		free(tmp->data_c);
+		free(tmp);
+	}
+}
+
 int help()
 {
 	printf("\n");
@@ -208,6 +219,9 @@ int main(int argc, char *argv[])
 		fgets(cmd, BUFFER_SIZE, stdin);
 		strtok(cmd, "\n");
 	}
+	
+	free_list(&students);
+	free(student);
 	
 	return 0;
 }
