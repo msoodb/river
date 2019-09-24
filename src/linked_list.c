@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#define BUFFER_SIZE 1024
 
 struct data
 {
@@ -125,6 +128,7 @@ void print(struct node *ptrhead)
 		print_student(ptrhead->data_c);
 		ptrhead = ptrhead->next;
 	}
+	printf("\n");
 }
 
 void init(struct node **ptrhead)
@@ -143,17 +147,45 @@ void init(struct node **ptrhead)
 	push(ptrhead, student3);
 }
 
+int help()
+{
+	printf("\n");
+	printf("init : kinitialize list\n");
+	printf("push : push to list\n");
+	printf("print : print entire list\n");
+	printf("save : save list on file\n");
+	printf("help : show help\n");
+	printf("q | Q: quit\n");
+	printf("\n");
+}
+
 int main(int argc, char *argv[])
 {
+	printf("river:& ");
 	struct node *students = NULL;
-	init(&students);
+	struct data *student4;
 	
-	print(students);
-	serialize_binary(students, "students.dat");
+	char cmd[BUFFER_SIZE];
+	fgets(cmd, BUFFER_SIZE, stdin);
+	strtok(cmd, "\n");
+	while (cmd != "q" && cmd != "Q") {		
+		if (strcmp(cmd, "init") == 0) {
+			init(&students);
+		}else if (strcmp(cmd, "print") == 0) {
+			print(students);
+		}else if (strcmp(cmd, "save") == 0) {
+			serialize_binary(students, "students.dat");
+		}else if (strcmp(cmd, "help") == 0) {			
+			help();
+		}else if ((strcmp(cmd, "q") == 0) || (strcmp(cmd, "Q") == 0)) {
+			break;
+		}else {
+			help();
+		}
+		printf("river:& ");
+		fgets(cmd, BUFFER_SIZE, stdin);
+		strtok(cmd, "\n");
+	}
 	
-	struct data *student4 = pop(&students);	
-
-	print(students);
-
 	return 0;
 }
