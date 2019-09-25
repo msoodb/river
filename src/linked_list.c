@@ -13,7 +13,8 @@ struct data
 	int status;
 };
 
-struct data* create_student(int id, char *name, char *lastname, char *addres, int status)
+struct data* create_student(int id, char *name, char *lastname,
+			    char *addres, int status)
 {
 	struct data *tmp = (struct data*) malloc(sizeof(struct data));
 	if(tmp == NULL){
@@ -81,10 +82,29 @@ struct data* pop(struct node **ptrhead)
 	if (*ptrhead == NULL) {
 		return NULL;
 	}
+	struct node *tmp = *ptrhead;
 	struct data *data = (*ptrhead)->data_c;
 	*ptrhead = (*ptrhead)->next;
+	free(tmp->data_c);
+	free(tmp);
 	return data;
 }
+
+void reverse(struct node **ptrhead)
+{	
+	struct node *previous = NULL;
+	struct node *current = *ptrhead;
+	struct node *next = NULL;
+		
+	while (current != NULL) {
+		next = current->next;
+		current->next = previous;
+		previous = current;
+		current = next;
+	}
+	*ptrhead = previous;	
+}
+
 void serialize(struct node *head, char *file)
 {
 	FILE *fp = fopen(file, "w");
@@ -179,13 +199,14 @@ void free_list(struct node **ptrhead)
 int help()
 {
 	printf("\n");
-	printf("  init : initialize list\n");
-	printf("  push : push to list\n");
-	printf("   pop : pop from list\n");
-	printf(" print : print entire list\n");
-	printf("  save : save list on file\n");
-	printf("  help : show help\n");
-	printf("   q/Q : quit\n");
+	printf("   init : initialize list\n");
+	printf("   push : push to list\n");
+	printf("    pop : pop from list\n");
+	printf("reverse : reverse list\n");
+	printf("  print : print entire list\n");
+	printf("   save : save list on file\n");
+	printf("   help : show help\n");
+	printf("    q/Q : quit\n");
 	printf("\n");
 }
 
@@ -205,6 +226,8 @@ int main(int argc, char *argv[])
 			;
 		}else if (strcmp(cmd, "pop") == 0) {
 			student = pop(&students);
+		}else if (strcmp(cmd, "reverse") == 0) {
+			reverse(&students);
 		}else if (strcmp(cmd, "print") == 0) {
 			print(students);
 		}else if (strcmp(cmd, "save") == 0) {
