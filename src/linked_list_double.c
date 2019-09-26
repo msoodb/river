@@ -4,7 +4,7 @@
 
 #define BUFFER_SIZE 1024
 
-struct data
+struct vessel
 {
 	int id;
 	char *name;
@@ -15,15 +15,16 @@ struct data
 
 struct node
 {
-	struct data *data_c;       
+	struct vessel *data;
+	struct node *prev;
 	struct node *next;
 	
 };
 
-struct data* create_student(int id, char *name, char *lastname,
+struct vessel* create_student(int id, char *name, char *lastname,
 			    char *addres, int status)
 {
-	struct data *tmp = (struct data*) malloc(sizeof(struct data));
+	struct vessel *tmp = (struct vessel*) malloc(sizeof(struct vessel));
 	if(tmp == NULL){
 		printf("out of memory\n");
 		return NULL;
@@ -50,7 +51,7 @@ void print_student_header()
 	printf("\n");
 }
 
-void print_student(struct data *student)
+void print_student(struct vessel *student)
 {
 	printf("%-6d", student->id);
 	printf("%-20s", student->name);
@@ -61,32 +62,34 @@ void print_student(struct data *student)
 }
 
 
-void push(struct node **ptrhead, struct data *data)
+void push(struct node **ptrhead, struct vessel *data)
 {
 	struct node *tmp = (struct node *)malloc(sizeof(struct node));
 	if (tmp == NULL) {
 		printf("out of memory!\n");
 		return;
 	}
-	tmp->data_c = data;
+	tmp->data = data;
+	tmp->prev = NULL;
 	tmp->next = NULL;
 
 	if (*ptrhead != NULL) {
-		tmp->next = (*ptrhead);		
+		tmp->next = (*ptrhead);
+		(*ptrhead)->prev = tmp;
 	}
 	*ptrhead = tmp;
-
 }
 
-struct data* pop(struct node **ptrhead)
+struct vessel* pop(struct node **ptrhead)
 {
 	if (*ptrhead == NULL) {
 		return NULL;
 	}
 	struct node *tmp = *ptrhead;
-	struct data *data = (*ptrhead)->data_c;
+	struct vessel *data = (*ptrhead)->data;
 	*ptrhead = (*ptrhead)->next;
-	free(tmp->data_c);
+	(*ptrhead)->prev = NULL;
+	free(tmp->data);
 	free(tmp);
 	return data;
 }
@@ -115,11 +118,11 @@ void serialize(struct node *head, char *file)
 	}
 	
 	while (head != NULL) {
-		fprintf(fp, "%d,", head->data_c->id);
-		fprintf(fp, "%s,", head->data_c->name);
-		fprintf(fp, "%s,", head->data_c->lastname);
-		fprintf(fp, "%s,", head->data_c->addres);
-		fprintf(fp, "%d", head->data_c->status);		
+		fprintf(fp, "%d,", head->data->id);
+		fprintf(fp, "%s,", head->data->name);
+		fprintf(fp, "%s,", head->data->lastname);
+		fprintf(fp, "%s,", head->data->addres);
+		fprintf(fp, "%d", head->data->status);		
 		fprintf(fp, "\n");
 		head = head->next;
 	}
@@ -135,7 +138,7 @@ void serialize_binary(struct node *head, char *file)
 	/* } */
 	
 	/* while (head != NULL) { */
-	/* 	fwrite(&(head->data_c->id), sizeof(int), 1, fp); */
+	/* 	fwrite(&(head->vesselc->id), sizeof(int), 1, fp); */
 	/* 	head = head->next; */
 	/* } */
 	/* fclose(fp); */
@@ -152,7 +155,7 @@ void deserialize_binary(struct node **ptrhead, char *file)
 	/* struct data *student = (struct data *)malloc(sizeof(struct data *));	 */
 	
 	/* while ( != NULL) { */
-	/* 	fread(&(data_c->id), sizeof(int), 1, fp); */
+	/* 	fread(&(vesselc->id), sizeof(int), 1, fp); */
 	/* 	head = head->next; */
 	/* } */
 	/* fclose(fp); */
@@ -164,7 +167,7 @@ void print(struct node *ptrhead)
 	print_student_header();
 		
 	while (ptrhead != NULL) {
-		print_student(ptrhead->data_c);
+		print_student(ptrhead->data);
 		ptrhead = ptrhead->next;
 	}
 	printf("\n");
@@ -176,7 +179,7 @@ void print_recursive_data(struct node *ptrhead)
 {	
 	if(ptrhead == NULL)		
 		return;
-	print_student(ptrhead->data_c);
+	print_student(ptrhead->data);
 	print_recursive_data(ptrhead->next);
 }
 
@@ -191,15 +194,15 @@ void print_recursive(struct node *ptrhead)
 void init(struct node **ptrhead)
 {
 	/* create data and push*/
-	struct data *student;
+	struct vessel *student;
 	student = create_student(101, "masoud", "bolhassani", "Tallinn Estonia", 1);
 	push(ptrhead, student);
 	
-	struct data *student2;
+	struct vessel *student2;
 	student2 = create_student(102, "mai", "volka", "Tallinn Estonia", 1);
 	push(ptrhead, student2);
 
-	struct data *student3;
+	struct vessel *student3;
 	student3 = create_student(103, "miloo", "volf", "Tallinn Estonia", 1);
 	push(ptrhead, student3);
 }
@@ -210,7 +213,7 @@ void free_list(struct node **ptrhead)
 	while (*ptrhead != NULL){
 		tmp = *ptrhead;
 		*ptrhead = (*ptrhead)->next;
-		free(tmp->data_c);
+		free(tmp->data);
 		free(tmp);
 	}
 }
@@ -233,7 +236,7 @@ int main(int argc, char *argv[])
 {
 	printf("river:& ");
 	struct node *students = NULL;
-	struct data *student;
+	struct vessel *student;
 	
 	char cmd[BUFFER_SIZE];
 	fgets(cmd, BUFFER_SIZE, stdin);
