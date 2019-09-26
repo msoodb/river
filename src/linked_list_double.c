@@ -4,7 +4,7 @@
 
 #define BUFFER_SIZE 1024
 
-struct vessel
+struct element
 {
 	int id;
 	char *name;
@@ -15,16 +15,16 @@ struct vessel
 
 struct node
 {
-	struct vessel *data;
+	struct element *data;
 	struct node *prev;
 	struct node *next;
 	
 };
 
-struct vessel* create_student(int id, char *name, char *lastname,
+struct element* create_element(int id, char *name, char *lastname,
 			    char *addres, int status)
 {
-	struct vessel *tmp = (struct vessel*) malloc(sizeof(struct vessel));
+	struct element *tmp = (struct element*) malloc(sizeof(struct element));
 	if(tmp == NULL){
 		printf("out of memory\n");
 		return NULL;
@@ -38,7 +38,7 @@ struct vessel* create_student(int id, char *name, char *lastname,
 	return tmp;
 }
 
-void print_student_header()
+void print_elemtn_header()
 {
 	printf("%-6s", "id");
 	printf("%-20s", "name");
@@ -51,18 +51,18 @@ void print_student_header()
 	printf("\n");
 }
 
-void print_student(struct vessel *student)
+void print_element(struct element *data)
 {
-	printf("%-6d", student->id);
-	printf("%-20s", student->name);
-	printf("%-20s", student->lastname);
-	printf("%-30s", student->addres);
-	printf("%-6d", student->status);
+	printf("%-6d", data->id);
+	printf("%-20s", data->name);
+	printf("%-20s", data->lastname);
+	printf("%-30s", data->addres);
+	printf("%-6d", data->status);
 	printf("\n");
 }
 
 
-void push(struct node **ptrhead, struct vessel *data)
+void push(struct node **ptrhead, struct element *data)
 {
 	struct node *tmp = (struct node *)malloc(sizeof(struct node));
 	if (tmp == NULL) {
@@ -80,13 +80,13 @@ void push(struct node **ptrhead, struct vessel *data)
 	*ptrhead = tmp;
 }
 
-struct vessel* pop(struct node **ptrhead)
+struct element* pop(struct node **ptrhead)
 {
 	if (*ptrhead == NULL) {
 		return NULL;
 	}
 	struct node *tmp = *ptrhead;
-	struct vessel *data = (*ptrhead)->data;
+	struct element *data = (*ptrhead)->data;
 	*ptrhead = (*ptrhead)->next;
 	(*ptrhead)->prev = NULL;
 	free(tmp->data);
@@ -138,7 +138,7 @@ void serialize_binary(struct node *head, char *file)
 	/* } */
 	
 	/* while (head != NULL) { */
-	/* 	fwrite(&(head->vesselc->id), sizeof(int), 1, fp); */
+	/* 	fwrite(&(head->elementc->id), sizeof(int), 1, fp); */
 	/* 	head = head->next; */
 	/* } */
 	/* fclose(fp); */
@@ -155,7 +155,7 @@ void deserialize_binary(struct node **ptrhead, char *file)
 	/* struct data *student = (struct data *)malloc(sizeof(struct data *));	 */
 	
 	/* while ( != NULL) { */
-	/* 	fread(&(vesselc->id), sizeof(int), 1, fp); */
+	/* 	fread(&(elementc->id), sizeof(int), 1, fp); */
 	/* 	head = head->next; */
 	/* } */
 	/* fclose(fp); */
@@ -164,47 +164,44 @@ void deserialize_binary(struct node **ptrhead, char *file)
 void print(struct node *ptrhead)
 {
 	printf("\n");
-	print_student_header();
+	print_elemtn_header();
 		
 	while (ptrhead != NULL) {
-		print_student(ptrhead->data);
+		print_element(ptrhead->data);
 		ptrhead = ptrhead->next;
 	}
 	printf("\n");
 }
 
-
-
 void print_recursive_data(struct node *ptrhead)
 {	
 	if(ptrhead == NULL)		
 		return;
-	print_student(ptrhead->data);
+	print_element(ptrhead->data);
 	print_recursive_data(ptrhead->next);
 }
 
 void print_recursive(struct node *ptrhead)
 {
 	printf("\n");
-	print_student_header();
+	print_elemtn_header();
 	print_recursive_data(ptrhead);	
 	printf("\n");
 }
 
 void init(struct node **ptrhead)
-{
-	/* create data and push*/
-	struct vessel *student;
-	student = create_student(101, "masoud", "bolhassani", "Tallinn Estonia", 1);
-	push(ptrhead, student);
+{	
+	struct element *data1;
+	data1 = create_element(101, "masoud", "bolhassani", "Tallinn Estonia", 1);
+	push(ptrhead, data1);
 	
-	struct vessel *student2;
-	student2 = create_student(102, "mai", "volka", "Tallinn Estonia", 1);
-	push(ptrhead, student2);
+	struct element *data2;
+	data2 = create_element(102, "mai", "volka", "Tallinn Estonia", 1);
+	push(ptrhead, data2);
 
-	struct vessel *student3;
-	student3 = create_student(103, "miloo", "volf", "Tallinn Estonia", 1);
-	push(ptrhead, student3);
+	struct element *data3;
+	data3 = create_element(103, "miloo", "volf", "Tallinn Estonia", 1);
+	push(ptrhead, data3);
 }
 
 void free_list(struct node **ptrhead)
@@ -235,25 +232,25 @@ int help()
 int main(int argc, char *argv[])
 {
 	printf("river:& ");
-	struct node *students = NULL;
-	struct vessel *student;
+	struct node *list = NULL;
+	struct element *data;
 	
 	char cmd[BUFFER_SIZE];
 	fgets(cmd, BUFFER_SIZE, stdin);
 	strtok(cmd, "\n");
 	while (cmd != "q" && cmd != "Q") {		
 		if (strcmp(cmd, "init") == 0) {
-			init(&students);
+			init(&list);
 		}else if (strcmp(cmd, "push") == 0) {
 			;
 		}else if (strcmp(cmd, "pop") == 0) {
-			student = pop(&students);
+			data = pop(&list);
 		}else if (strcmp(cmd, "reverse") == 0) {
-			reverse(&students);
+			reverse(&list);
 		}else if (strcmp(cmd, "print") == 0) {
-			print_recursive(students);
+			print_recursive(list);
 		}else if (strcmp(cmd, "save") == 0) {
-			serialize(students, "students.txt");
+			serialize(list, "students.txt");
 		}else if (strcmp(cmd, "help") == 0) {			
 			help();
 		}else if ((strcmp(cmd, "q") == 0) || (strcmp(cmd, "Q") == 0)) {
@@ -266,8 +263,8 @@ int main(int argc, char *argv[])
 		strtok(cmd, "\n");
 	}
 	
-	free_list(&students);
-	free(student);
+	free_list(&list);
+	//free(data);
 	
 	return 0;
 }
