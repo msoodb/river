@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <getopt.h>
 
-#define BUFFER_SIZE 1024
+const int BUFFER_SIZE=1024;
+const char *program_name;
 
 struct element
 {
@@ -41,22 +43,30 @@ struct element* create_element(int id, char *name, char *lastname,
 void print_elemtn_header()
 {
 	printf("%-6s", "id");
+	printf(" | ");
 	printf("%-20s", "name");
+	printf(" | ");
 	printf("%-20s", "lastname");
+	printf(" | ");
 	printf("%-30s", "addres");
+	printf(" | ");
 	printf("%-6s", "status");
 	printf("\n");
-	printf("------------------------------------------");
-	printf("------------------------------------------");
+	printf("----------------------------------------------");
+	printf("----------------------------------------------");
 	printf("\n");
 }
 
 void print_element(struct element *data)
 {
 	printf("%-6d", data->id);
+	printf(" | ");
 	printf("%-20s", data->name);
+	printf(" | ");
 	printf("%-20s", data->lastname);
+	printf(" | ");
 	printf("%-30s", data->addres);
+	printf(" | ");
 	printf("%-6d", data->status);
 	printf("\n");
 }
@@ -109,7 +119,7 @@ void reverse(struct node **ptrhead)
 	*ptrhead = previous;	
 }
 
-void serialize(struct node *head, char *file)
+void save(struct node *head, char *file)
 {
 	FILE *fp = fopen(file, "w");
 	if (fp == NULL) {
@@ -127,38 +137,6 @@ void serialize(struct node *head, char *file)
 		head = head->next;
 	}
 	fclose(fp);
-}
-
-void serialize_binary(struct node *head, char *file)
-{
-	/* FILE *fp = fopen(file, "wb"); */
-	/* if (fp == NULL) { */
-	/* 	printf("error file : %s\n", file); */
-	/* 	return; */
-	/* } */
-	
-	/* while (head != NULL) { */
-	/* 	fwrite(&(head->elementc->id), sizeof(int), 1, fp); */
-	/* 	head = head->next; */
-	/* } */
-	/* fclose(fp); */
-}
-
-void deserialize_binary(struct node **ptrhead, char *file)
-{
-	/* FILE *fp = fopen(file, "rb"); */
-	/* if (fp == NULL) { */
-	/* 	printf("error file : %s\n", file); */
-	/* 	return; */
-	/* } */
-
-	/* struct data *student = (struct data *)malloc(sizeof(struct data *));	 */
-	
-	/* while ( != NULL) { */
-	/* 	fread(&(elementc->id), sizeof(int), 1, fp); */
-	/* 	head = head->next; */
-	/* } */
-	/* fclose(fp); */
 }
 
 void print(struct node *ptrhead)
@@ -215,48 +193,147 @@ void free_list(struct node **ptrhead)
 	}
 }
 
-int help()
+void print_usage(FILE *stream, int exit_b, int exit_code)
 {
-	printf("\n");
-	printf("   init : initialize list\n");
-	printf("   push : push to list\n");
-	printf("    pop : pop from list\n");
-	printf("reverse : reverse list\n");
-	printf("  print : print entire list\n");
-	printf("   save : save list on file\n");
-	printf("   help : show help\n");
-	printf("    q/Q : quit\n");
-	printf("\n");
+	fprintf(stream, "river is an interactive linkedlist terminal.\n");
+	fprintf(stream, "\n");		
+	fprintf(stream, "Usage : %s options [inputfile ...]\n", program_name);
+	fprintf(stream,
+		"-i --init                  initalize list.\n"
+		"-p --print                 print list.\n"
+		"-r --reverse               reverse list.\n"
+		"-s --save      filename    save list.\n"
+		"-h --help                  display this help and exit.\n"
+		"   --version               output version information and exit.\n");
+	fprintf(stream, "\n");
+	fprintf(stream, "Report bugs to <river-bug@river.org>.\n");
+
+	if (exit_b) {
+		exit (exit_code);	
+	}
+}
+
+void print_version(FILE *stream, int exit_b, int exit_code)
+{
+	fprintf(stream, "river (rever linked list) %s\n", "1.0.1");
+	if (exit_b) {
+		exit (exit_code);	
+	}
+}
+
+void print_help(FILE *stream)
+{
+	fprintf(stream, "You are using river, the command-line linkedlist terminal.\n");
+	fprintf(stream, "\n");
+	fprintf(stream, "  type init for initialize list.\n");
+	fprintf(stream, "  type print for print list.\n");
+	fprintf(stdout, "  type reverse for reversing list.\n");
+	fprintf(stream, "  type save for saving file.\n");
+	fprintf(stream, "  type q to quit.\n");
+	fprintf(stream, "\n");
 }
 
 int main(int argc, char *argv[])
 {
-	printf("river:& ");
 	struct node *list = NULL;
 	struct element *data;
+	
+	int next_option;
+	const char * const short_options = "ipro:h";
+	const struct option long_options[] = {
+		{"init",       0, NULL, 'i'},
+		{"print",      0, NULL, 'p'},
+		{"reverse",    0, NULL, 'r'},
+		{"save",       1, NULL, 's'},
+		{"help",       0, NULL, 'h'},
+		{"version",    0, NULL, 'v' },
+		{NULL,         0, NULL,  0 }
+	};
+
+	const char* output_filename = NULL;
+	program_name = argv[0];
+
+	do
+	{
+		next_option = getopt_long(argc, argv, short_options,
+					  long_options, NULL);
+		switch (next_option) {
+		case 'i': {
+			init(&list);
+			break;
+		}
+		case 'p': {
+			print(list);
+			break;
+		}
+		case 'r': {
+			reverse(&list);
+			break;
+		}
+		case 's': {
+			//output_filename = optarg;
+			save(list, "filee.txt");
+			break;
+		}
+		case 'h': {
+			print_usage(stdout, 1, 0);			
+		}
+		case 'v': {			
+			print_version(stdout, 1, 0);					
+		}
+		case '?': {
+			print_usage(stderr, 1, 1);			
+		}
+		case -1: {			
+			break;
+		}
+		default:
+			abort();
+		}
+					
+		
+	} while (next_option != -1);
+
+	printf("river (1.0.1)\n");
+	printf("Type \"help\" for help.\n");
+	printf("\n");
+	printf("river:& ");
+
 	
 	char cmd[BUFFER_SIZE];
 	fgets(cmd, BUFFER_SIZE, stdin);
 	strtok(cmd, "\n");
-	while (cmd != "q" && cmd != "Q") {		
+	
+	while (cmd != "q" && cmd != "Q") {
 		if (strcmp(cmd, "init") == 0) {
 			init(&list);
-		}else if (strcmp(cmd, "push") == 0) {
+		}
+		else if (strcmp(cmd, "push") == 0) {
 			;
-		}else if (strcmp(cmd, "pop") == 0) {
+		}
+		else if (strcmp(cmd, "pop") == 0) {
 			data = pop(&list);
-		}else if (strcmp(cmd, "reverse") == 0) {
+		}
+		else if (strcmp(cmd, "reverse") == 0) {
 			reverse(&list);
-		}else if (strcmp(cmd, "print") == 0) {
+		}  
+		else if (strcmp(cmd, "print") == 0) {
 			print_recursive(list);
-		}else if (strcmp(cmd, "save") == 0) {
-			serialize(list, "students.txt");
-		}else if (strcmp(cmd, "help") == 0) {			
-			help();
-		}else if ((strcmp(cmd, "q") == 0) || (strcmp(cmd, "Q") == 0)) {
+		}
+		else if (strcmp(cmd, "save") == 0) {
+			save(list, "list.txt");
+		}
+		else if (strcmp(cmd, "help") == 0) {
+			print_help(stdout);
+		}
+		else if (strcmp(cmd, "version") == 0) {
+			print_version(stdout, 0, 0);
+		}
+		else if ((strcmp(cmd, "q") == 0) || (strcmp(cmd, "Q") == 0)) {
 			break;
-		}else {
-			help();
+		}
+		else {
+			print_help(stderr);
 		}
 		printf("river:& ");
 		fgets(cmd, BUFFER_SIZE, stdin);
@@ -264,7 +341,5 @@ int main(int argc, char *argv[])
 	}
 	
 	free_list(&list);
-	//free(data);
-	
 	return 0;
 }
