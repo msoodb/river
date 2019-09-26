@@ -71,7 +71,6 @@ void print_element(struct element *data)
 	printf("\n");
 }
 
-
 void push(struct node **ptrhead, struct element *data)
 {
 	struct node *tmp = (struct node *)malloc(sizeof(struct node));
@@ -228,7 +227,7 @@ void print_help(FILE *stream)
 	fprintf(stream, "  type init for initialize list.\n");
 	fprintf(stream, "  type print for print list.\n");
 	fprintf(stdout, "  type reverse for reversing list.\n");
-	fprintf(stream, "  type save for saving file.\n");
+	fprintf(stream, "  type save [filename] for saving file.\n");
 	fprintf(stream, "  type q to quit.\n");
 	fprintf(stream, "\n");
 }
@@ -300,10 +299,25 @@ int main(int argc, char *argv[])
 	printf("river:& ");
 
 	
-	char cmd[BUFFER_SIZE];
-	fgets(cmd, BUFFER_SIZE, stdin);
-	strtok(cmd, "\n");
+	char buffer[BUFFER_SIZE];
+	fgets(buffer, BUFFER_SIZE, stdin);
+	strtok(buffer, "\n");
 	
+	char delim[] = " ";
+	char *arguman[5];
+
+	
+	char *ptr = strtok(buffer, delim);
+	int i=0;
+	while(ptr != NULL)
+	{
+		arguman[i] = ptr;
+		ptr = strtok(NULL, delim);
+		i++;
+	}
+	
+	char *cmd = arguman[0];
+
 	while (cmd != "q" && cmd != "Q") {
 		if (strcmp(cmd, "init") == 0) {
 			init(&list);
@@ -321,7 +335,15 @@ int main(int argc, char *argv[])
 			print_recursive(list);
 		}
 		else if (strcmp(cmd, "save") == 0) {
-			save(list, "list.txt");
+			if(arguman[1] != NULL){
+				char *file = arguman[1];
+				save(list, file);
+			}
+			else{
+				printf("eneter file name after save command\n");
+				break;
+			}
+			
 		}
 		else if (strcmp(cmd, "help") == 0) {
 			print_help(stdout);
@@ -335,9 +357,21 @@ int main(int argc, char *argv[])
 		else {
 			print_help(stderr);
 		}
+		
 		printf("river:& ");
 		fgets(cmd, BUFFER_SIZE, stdin);
 		strtok(cmd, "\n");
+
+		
+		ptr = strtok(buffer, delim);
+		i=0;
+		while(ptr != NULL)
+		{
+			arguman[i] = ptr;
+			ptr = strtok(NULL, delim);
+			i++;
+		}		
+		cmd = arguman[0];
 	}
 	
 	free_list(&list);
