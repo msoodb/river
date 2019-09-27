@@ -305,7 +305,9 @@ int main(int argc, char *argv[])
 	
 	char delim[] = " ";
 	char *arguman[5];
-
+	for (int i = 0; i < 5; ++i) {
+		arguman[i] = NULL;
+	}
 	
 	char *ptr = strtok(buffer, delim);
 	int i=0;
@@ -335,13 +337,12 @@ int main(int argc, char *argv[])
 			print_recursive(list);
 		}
 		else if (strcmp(cmd, "save") == 0) {
-			if(arguman[1] != NULL){
+			if(arguman[1] != NULL){				
 				char *file = arguman[1];
 				save(list, file);
 			}
 			else{
 				printf("eneter file name after save command\n");
-				break;
 			}
 			
 		}
@@ -362,6 +363,9 @@ int main(int argc, char *argv[])
 		fgets(cmd, BUFFER_SIZE, stdin);
 		strtok(cmd, "\n");
 
+		for (int i = 0; i < 5; ++i) {
+			arguman[i] = NULL;
+		}
 		
 		ptr = strtok(buffer, delim);
 		i=0;
