@@ -142,11 +142,13 @@ void print(struct node *ptrhead)
 {
 	printf("\n");
 	print_elemtn_header();
-		
+	int rows=0;	
 	while (ptrhead != NULL) {
 		print_element(ptrhead->data);
 		ptrhead = ptrhead->next;
+		rows++;
 	}
+	printf(" (%d rows)\n",rows);
 	printf("\n");
 }
 
@@ -201,6 +203,7 @@ void print_usage(FILE *stream, int exit_b, int exit_code)
 		"-i --init                  initalize list.\n"
 		"-p --print                 print list.\n"
 		"-r --reverse               reverse list.\n"
+		"   --pop                   pop first element in list.\n"
 		"-s --save      filename    save list.\n"
 		"-h --help                  display this help and exit.\n"
 		"   --version               output version information and exit.\n");
@@ -224,11 +227,13 @@ void print_help(FILE *stream)
 {
 	fprintf(stream, "You are using river, the command-line linkedlist terminal.\n");
 	fprintf(stream, "\n");
-	fprintf(stream, "  type init for initialize list.\n");
-	fprintf(stream, "  type print for print list.\n");
-	fprintf(stdout, "  type reverse for reversing list.\n");
-	fprintf(stream, "  type save [filename] for saving file.\n");
-	fprintf(stream, "  type q to quit.\n");
+	fprintf(stream, "  type 'help' display this help.\n");
+	fprintf(stream, "  type 'init' for initialize list.\n");
+	fprintf(stream, "  type 'print' for print list.\n");
+	fprintf(stdout, "  type 'reverse' for reversing list.\n");
+	fprintf(stdout, "  type 'pop' for pop first element in list.\n");
+	fprintf(stream, "  type 'save DEST' for saving file.\n");
+	fprintf(stream, "  type 'q' to quit.\n");
 	fprintf(stream, "\n");
 }
 
@@ -243,6 +248,7 @@ int main(int argc, char *argv[])
 		{"init",       0, NULL, 'i'},
 		{"print",      0, NULL, 'p'},
 		{"reverse",    0, NULL, 'r'},
+		{"pop",        0, NULL, 'o'},
 		{"save",       1, NULL, 's'},
 		{"help",       0, NULL, 'h'},
 		{"version",    0, NULL, 'v' },
@@ -269,6 +275,10 @@ int main(int argc, char *argv[])
 			reverse(&list);
 			break;
 		}
+		case 'o': {
+			pop(&list);
+			break;
+		}
 		case 's': {
 			//output_filename = optarg;
 			save(list, "filee.txt");
@@ -292,11 +302,14 @@ int main(int argc, char *argv[])
 					
 		
 	} while (next_option != -1);
-
+	
 	printf("river (1.0.1)\n");
 	printf("Type \"help\" for help.\n");
 	printf("\n");
+
+	printf("\033[1;31m");
 	printf("river:& ");
+	printf("\033[0m");
 
 	
 	char buffer[BUFFER_SIZE];
@@ -334,7 +347,7 @@ int main(int argc, char *argv[])
 			reverse(&list);
 		}  
 		else if (strcmp(cmd, "print") == 0) {
-			print_recursive(list);
+			print(list);
 		}
 		else if (strcmp(cmd, "save") == 0) {
 			if(arguman[1] != NULL){				
@@ -342,7 +355,8 @@ int main(int argc, char *argv[])
 				save(list, file);
 			}
 			else{
-				printf("eneter file name after save command\n");
+				printf("save: missing file operand\n");
+				printf("type 'help' for more information.\n");
 			}
 			
 		}
@@ -359,7 +373,10 @@ int main(int argc, char *argv[])
 			print_help(stderr);
 		}
 		
+		printf("\033[1;31m");
 		printf("river:& ");
+		printf("\033[0m");
+				
 		fgets(cmd, BUFFER_SIZE, stdin);
 		strtok(cmd, "\n");
 
