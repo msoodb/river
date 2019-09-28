@@ -5,6 +5,8 @@
 #include <wordexp.h>
 #include <assert.h>
 
+#include "list.h"
+
 const int BUFFER_SIZE=1024;
 const char *program_name;
 const char *version="1.0.1";
@@ -64,8 +66,7 @@ char **split_commandline(const char *cmdline, int *argc)
 	wordexp_t p;
 	
 	// Note! This expands shell variables.	
-	if (wordexp(cmdline, &p, 0))
-	{
+	if (wordexp(cmdline, &p, 0)){
 		return NULL;
 	}
 	
@@ -84,8 +85,7 @@ char **split_commandline(const char *cmdline, int *argc)
 	wordfree(&p);
 	return argv;
 fail:
-	wordfree(&p);
-	
+	wordfree(&p);	
 	if (argv){
 		for (i = 0; i < *argc; i++){
 			if (argv[i]){
@@ -97,13 +97,11 @@ fail:
 	return NULL;
 }
 
-int main(int argc, char *argv[])
+
+void command_line_mode(int argc, char *argv[])
 {
-	struct node *list = NULL;
-	struct element *data;
-	
 	int next_option;
-	const char * const short_options = "ipro:h";
+	const char * const short_options = "iprs:h";
 	const struct option long_options[] = {
 		{"init",       0, NULL, 'i'},
 		{"print",      0, NULL, 'p'},
@@ -111,37 +109,41 @@ int main(int argc, char *argv[])
 		{"pop",        0, NULL, 'o'},
 		{"save",       1, NULL, 's'},
 		{"help",       0, NULL, 'h'},
-		{"version",    0, NULL, 'v' },
+		{"version",    0, NULL, 'v'},
 		{NULL,         0, NULL,  0 }
 	};
 
 	const char* output_filename = NULL;
 	program_name = argv[0];
 
+	struct node *list = NULL;
+	struct element *data;
+	
 	do
 	{
 		next_option = getopt_long(argc, argv, short_options,
-					  long_options, NULL);
+				  long_options, NULL);
 		switch (next_option) {
 		case 'i': {
-			//init(&list);
+			init(&list);
 			break;
 		}
 		case 'p': {
-			//print(list);
+			print(list);
 			break;
 		}
 		case 'r': {
-			//reverse(&list);
+			reverse(&list);
 			break;
 		}
 		case 'o': {
-			//pop(&list);
+			pop(&list);
 			break;
 		}
 		case 's': {
+			//printf("opt: %s\n", optarg);
 			//output_filename = optarg;
-			//save(list, "filee.txt");
+			save(list, "f1.txt");
 			break;
 		}
 		case 'h': {
@@ -154,15 +156,19 @@ int main(int argc, char *argv[])
 			print_usage(stderr, 1, 1);			
 		}
 		case -1: {			
-			break;
+			break;	       
 		}
 		default:
-			abort();
+			print_usage(stderr, 1, 1);			
 		}
-					
-		
-	} while (next_option != -1);
+	}while (next_option != -1);
+	//free_list(&list);
+}
 
+void cli_mode()
+{
+	struct node *list = NULL;
+	struct element *data;
 	char *cmd;
 	printf("river (1.0.1)\n");
 	printf("Type \"help\" for help.\n");
@@ -182,24 +188,24 @@ int main(int argc, char *argv[])
 		cmd = *(argumanv+0);
 
 		if (strcmp(cmd, "init") == 0) {
-			//init(&list);
+			init(&list);
 		}
 		else if (strcmp(cmd, "push") == 0) {
 			;
 		}
 		else if (strcmp(cmd, "pop") == 0) {
-			//data = pop(&list);
+			data = pop(&list);
 		}
 		else if (strcmp(cmd, "reverse") == 0) {
-			//reverse(&list);
+			reverse(&list);
 		}  
 		else if (strcmp(cmd, "print") == 0) {
-			//print(list);
+			print(list);
 		}
 		else if (strcmp(cmd, "save") == 0) {
 			if(*(argumanv+1) != NULL){				
 				char *file =*(argumanv+1);
-				//save(list, file);
+				save(list, file);
 			}
 			else{
 				printf("save: missing file operand\n");
@@ -219,10 +225,18 @@ int main(int argc, char *argv[])
 		else {
 			print_help(stderr);
 		}
-	
-		
+			
 	} while (cmd != "q" && cmd != "Q");
 
-//free_list(&list);*/
+//free_list(&list);
+}
+
+int main(int argc, char *argv[])
+{
+	if(argc > 1){
+		command_line_mode(argc, argv);
+	}else {
+		cli_mode();
+	}	
 	return 0;
 }
