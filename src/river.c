@@ -162,7 +162,8 @@ void command_line_mode(int argc, char *argv[])
 			print_usage(stderr, 1, 1);			
 		}
 	}while (next_option != -1);
-	//free_list(&list);
+
+	free_list(&list);
 }
 
 void cli_mode()
@@ -228,7 +229,7 @@ void cli_mode()
 			
 	} while (cmd != "q" && cmd != "Q");
 
-//free_list(&list);
+	free_list(&list);
 }
 
 int main(int argc, char *argv[])
