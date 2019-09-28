@@ -1,3 +1,5 @@
+#define _GNU_SOURCE 1
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,7 +58,7 @@ void print_help(FILE *stream)
 
 char **split_commandline(const char *cmdline, int *argc)
 {
-	int i;
+	unsigned int i;
 	char **argv = NULL;
 	assert(argc);
 
@@ -64,7 +66,7 @@ char **split_commandline(const char *cmdline, int *argc)
 		return NULL;
 	}
 	wordexp_t p;
-	
+
 	// Note! This expands shell variables.	
 	if (wordexp(cmdline, &p, 0)){
 		return NULL;
@@ -87,6 +89,7 @@ char **split_commandline(const char *cmdline, int *argc)
 fail:
 	wordfree(&p);	
 	if (argv){
+		int i;
 		for (i = 0; i < *argc; i++){
 			if (argv[i]){
 				free(argv[i]);
@@ -113,11 +116,11 @@ void command_line_mode(int argc, char *argv[])
 		{NULL,         0, NULL,  0 }
 	};
 
-	const char* output_filename = NULL;
+	//const char* output_filename = NULL;
 	program_name = argv[0];
 
 	struct node *list = NULL;
-	struct element *data;
+	//struct element *data;
 	
 	do
 	{
@@ -166,11 +169,10 @@ void command_line_mode(int argc, char *argv[])
 	free_list(&list);
 }
 
-void cli_mode()
+int cli_mode()
 {
 	struct node *list = NULL;
-	struct element *data;
-	char *cmd;
+	char *cmd = NULL;
 	printf("river (1.0.1)\n");
 	printf("Type \"help\" for help.\n");
 	printf("\n");
@@ -179,15 +181,15 @@ void cli_mode()
 		printf("\033[1;31m");
 		printf("river:& ");
 		printf("\033[0m");
-				
+		
 		char buffer[BUFFER_SIZE];
 		fgets(buffer, BUFFER_SIZE, stdin);
 		strtok(buffer, "\n");
-
+		
 		int *argumanc = (int *)malloc(sizeof(int));	
-		char **argumanv = split_commandline(buffer, argumanc);	
+		char **argumanv = split_commandline(buffer, argumanc);		
 		cmd = *(argumanv+0);
-
+		
 		if (strcmp(cmd, "init") == 0) {
 			init(&list);
 		}
@@ -195,16 +197,16 @@ void cli_mode()
 			;
 		}
 		else if (strcmp(cmd, "pop") == 0) {
-			data = pop(&list);
+			pop(&list);
 		}
 		else if (strcmp(cmd, "reverse") == 0) {
 			reverse(&list);
-		}  
+		}
 		else if (strcmp(cmd, "print") == 0) {
 			print(list);
 		}
 		else if (strcmp(cmd, "save") == 0) {
-			if(*(argumanv+1) != NULL){				
+			if(*(argumanv+1) != NULL){
 				char *file =*(argumanv+1);
 				save(list, file);
 			}
@@ -221,23 +223,22 @@ void cli_mode()
 			print_version(stdout, 0, 0);
 		}
 		else if ((strcmp(cmd, "q") == 0) || (strcmp(cmd, "Q") == 0)) {
-			break;
+			return 0;
 		}
 		else {
 			print_help(stderr);
 		}
-			
-	} while (cmd != "q" && cmd != "Q");
-
+	}while (1);
 	free_list(&list);
+	return 0;
 }
 
 int main(int argc, char *argv[])
 {
-	if(argc > 1){
-		command_line_mode(argc, argv);
+	if(argc == 1){
+		return cli_mode();		
 	}else {
-		cli_mode();
+		command_line_mode(argc, argv);
 	}	
 	return 0;
 }
