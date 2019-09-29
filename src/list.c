@@ -1,8 +1,25 @@
-#include "list.h"
+//#include "list.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+struct element
+{
+	int id;
+	char *name;
+	char *lastname;
+	char *addres;
+	int status;
+};
+
+struct node
+{
+	struct element *data;
+	struct node *prev;
+	struct node *next;
+	
+};
 
 struct element* create_element(int id, char *name, char *lastname,
 			    char *addres, int status)
@@ -173,4 +190,12 @@ void free_list(struct node **ptrhead)
 		free(tmp->data);
 		free(tmp);
 	}
+}
+
+int main(int argc, char *argv[])
+{
+	struct node *list;
+	init(&list);
+	print(list);
+	return 0;
 }
