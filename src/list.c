@@ -60,6 +60,22 @@ out:
 	return;
 }
 
+void pop(struct node **ptr_head, int *data)
+{
+	if (*ptr_head == NULL) {
+		goto out;
+	}
+	struct node *current;
+	current = *ptr_head;
+
+	*ptr_head = (*ptr_head)->next;
+	*data = current->data;
+	free(current);
+
+out:
+	return;
+}
+
 void delete (struct node **ptr_head)
 {
 	struct node *current;
@@ -87,6 +103,10 @@ int main(int argc, char *argv[])
 	push(&head, 6);
 	append(&head, 7);
 	print(head);
+	int a;
+	pop(&head, &a);
+	print(head);
+	printf("a is : %d\n", a);
 	delete(&head);
 	return 0;
 }
