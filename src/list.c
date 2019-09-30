@@ -115,8 +115,9 @@ void delete (struct node **ptr_head)
 
 void print(struct node *head)
 {
+	int node_number = 0;
 	while (head != NULL) {
-		printf("%d\n", head->data);
+		printf("node %d = %d\n", node_number++, head->data);
 		head = head->next;
 	}	
 }
@@ -131,7 +132,6 @@ int main(int argc, char *argv[])
 	}else {
 		printf("list is not empty\n");
 	}
-
 
         /* push to list */
 	push(&head, 4);
@@ -158,7 +158,6 @@ int main(int argc, char *argv[])
 	
 	/* delete list */
 	delete(&head);
-
 
 	return 0;
 }
