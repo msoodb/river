@@ -5,6 +5,19 @@
  * Description: data structure to store a linked list.
  */
 
+/*
+ * push
+ * append
+ * is_empty
+ * pop
+ * top
+ * reverse
+ * print
+ * erase   erase entire list
+ * lenght
+ * delete
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -26,6 +39,11 @@ struct node *create_node(int data)
 	new_node->next = NULL;
 out:
 	return new_node;
+}
+
+int is_empty(struct node *head)
+{
+	return head == NULL;
 }
 
 void push(struct node **ptr_head, int data)
@@ -76,6 +94,16 @@ out:
 	return;
 }
 
+int top(struct node *head, int *data)
+{
+	if (head != NULL) {
+		*data = head->data;
+		return 1;
+	}
+	
+	return 0;
+}
+
 void reverse(struct node **ptr_head)
 {
 	struct node *prev;
@@ -96,12 +124,7 @@ void reverse(struct node **ptr_head)
 	*ptr_head = current;
 }
 
-int is_empty(struct node *head)
-{
-	return head == NULL;
-}
-
-void delete (struct node **ptr_head)
+void erase(struct node **ptr_head)
 {
 	struct node *current;
 	current = *ptr_head;
@@ -111,6 +134,18 @@ void delete (struct node **ptr_head)
 		*ptr_head = (*ptr_head)->next;
 		free(current);
 	}
+}
+
+int lenght(struct node *head)
+{
+	int lenght = 0;
+	struct node *current;
+	current = head;
+	while (current != NULL) {
+		++lenght;
+		current = current->next;
+	}
+	return lenght;
 }
 
 void print(struct node *head)
@@ -136,7 +171,17 @@ int main(int argc, char *argv[])
         /* push to list */
 	push(&head, 4);
 	push(&head, 6);
+	push(&head, 12);
 
+	/* print entire list */
+	print(head);
+	
+	/* top */
+	int t;
+	if (top(head, &t)) {
+		printf("top is %d\n", t);
+	}
+			
 	/* append to end of list */
 	append(&head, 7);
 
@@ -155,9 +200,12 @@ int main(int argc, char *argv[])
 	}else {
 		printf("list is not empty\n");
 	}
+
+	/* lenght */
+	printf("lenght of head is : %d\n", lenght(head));
 	
-	/* delete list */
-	delete(&head);
+	/* erase list */
+	erase(&head);
 
 	return 0;
 }
