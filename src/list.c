@@ -76,6 +76,31 @@ out:
 	return;
 }
 
+void reverse(struct node **ptr_head)
+{
+	struct node *prev;
+	struct node *current;
+	struct node *itr;
+
+	prev = NULL;
+	current = *ptr_head;
+
+	itr = current;
+	while (itr != NULL) {
+		current = itr;
+		itr = itr->next;		
+		current->next = prev;
+		prev = current;		
+	}
+	
+	*ptr_head = current;
+}
+
+int is_empty(struct node *head)
+{
+	return head == NULL;
+}
+
 void delete (struct node **ptr_head)
 {
 	struct node *current;
@@ -99,14 +124,41 @@ void print(struct node *head)
 int main(int argc, char *argv[])
 {
 	struct node *head;
+
+        /* check list is empty or not */
+	if (is_empty(head)) {
+		printf("list is empty\n");
+	}else {
+		printf("list is not empty\n");
+	}
+
+
+        /* push to list */
 	push(&head, 4);
 	push(&head, 6);
+
+	/* append to end of list */
 	append(&head, 7);
+
+	/* print entire list */
 	print(head);
-	int a;
-	pop(&head, &a);
+
+	/* reverse list */	
+	reverse(&head);
+
+	/* print entire list */
 	print(head);
-	printf("a is : %d\n", a);
+
+	/* check list is empty or not */
+	if (is_empty(head)) {
+		printf("list is empty\n");
+	}else {
+		printf("list is not empty\n");
+	}
+	
+	/* delete list */
 	delete(&head);
+
+
 	return 0;
 }
