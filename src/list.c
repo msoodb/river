@@ -26,9 +26,7 @@
 struct node
 {
 	int data;
-	struct node *prev;
-	struct node *next;
-	
+	struct node *prev, *next;
 };
 
 struct node *create_node(int data)
@@ -39,6 +37,7 @@ struct node *create_node(int data)
 		goto out;
 	}	
 	new_node->data = data;
+	new_node->prev = NULL;
 	new_node->next = NULL;
 out:
 	return new_node;
@@ -83,16 +82,15 @@ out:
 
 void pop(struct node **ptr_head, int *data)
 {
-	if (*ptr_head == NULL) {
+	if (*ptr_head == NULL)
 		goto out;
-	}
+	
 	struct node *current;
 	current = *ptr_head;
 
 	*ptr_head = (*ptr_head)->next;
 	*data = current->data;
 	free(current);
-
 out:
 	return;
 }
@@ -146,6 +144,7 @@ int delete (struct node **ptr_head, int location)
 		}
 		itr = itr->next;
 	}
+
 out_failure:
 	return 0;
 out_success:
@@ -190,14 +189,11 @@ int main(int argc, char *argv[])
 {
 	struct node *head;
 
-        /* check list is empty or not */
-	if (is_empty(head)) {
+	if (is_empty(head))
 		printf("list is empty\n");
-	}else {
+	else 
 		printf("list is not empty\n");
-	}
 
-        /* push to list */
 	push(&head, 4);
 	push(&head, 6);
 	push(&head, 12);
@@ -205,49 +201,37 @@ int main(int argc, char *argv[])
 	push(&head, 9);
 	push(&head, 2);
 
-	/* print entire list */
 	print(head);
 	
-	/* delete */
 	delete(&head, 0);
 
 	printf("\n");
 	
-	/* print entire list */
 	print(head);
 
 	return 0;
 	
 	
-	/* top */
 	int t;
 	if (top(head, &t)) {
 		printf("top is %d\n", t);
 	}
 			
-	/* append to end of list */
 	append(&head, 7);
 
-	/* print entire list */
 	print(head);
 
-	/* reverse list */	
 	reverse(&head);
 
-	/* print entire list */
 	print(head);
 
-	/* check list is empty or not */
-	if (is_empty(head)) {
+	if (is_empty(head))
 		printf("list is empty\n");
-	}else {
+	else
 		printf("list is not empty\n");
-	}
-
-	/* lenght */
+	
 	printf("lenght of head is : %d\n", lenght(head));
 	
-	/* erase list */
 	erase(&head);
 
 	return 0;
