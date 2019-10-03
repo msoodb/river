@@ -47,7 +47,7 @@ static inline int is_empty(struct node *head)
 	return head == NULL;
 }
 
-void push(struct node **ptr_head, int data)
+static void push(struct node **ptr_head, int data)
 {
 	struct node *new_node = create_node(data);
 	struct node *current;
