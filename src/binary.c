@@ -11,8 +11,7 @@ struct element
 struct node
 {
 	struct element *data;
-	struct node *left;
-	struct node *right;
+	struct node *left, *right;
 };
 
 int elmcmp(struct element *elm1, struct element *elm2)
@@ -23,9 +22,18 @@ int elmcmp(struct element *elm1, struct element *elm2)
 struct node *create_node(struct element *e)
 {
 	struct node *new = (struct node *)malloc(sizeof(struct node));
+	if (new == NULL) {
+		new = NULL;
+		goto out_failure;
+	}
 	new->data = e;
 	new->left = NULL;
 	new->right = NULL;
+	
+out_sucsess:
+	return new;	
+out_failure:
+	return new;
 }
 
 void insert(struct node **root, struct element *e)
