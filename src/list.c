@@ -1,7 +1,6 @@
 /*
  * This is the simple implementaion of linked list.
  * Please use it consistently and contribite on it.
- *
  * Description: data structure to store a linked list.
  */
 
