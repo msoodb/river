@@ -6,6 +6,7 @@
  */
 
 /*
+ * create_node
  * push
  * append
  * is_empty
@@ -15,7 +16,7 @@
  * print
  * erase   erase entire list
  * lenght
- * delete
+ * delete  delete given node
  */
 
 #include <stdio.h>
@@ -24,6 +25,7 @@
 struct node
 {
 	int data;
+	struct node *prev;
 	struct node *next;
 	
 };
@@ -124,6 +126,32 @@ void reverse(struct node **ptr_head)
 	*ptr_head = current;
 }
 
+int delete (struct node **ptr_head, int location)
+{
+	struct node *current;
+	struct node *itr;
+	
+	current = *ptr_head;
+	itr = current;
+
+	int i = 0;
+	while (itr->next != NULL) {
+		current = itr;
+		if (i++ == location-1) {
+			itr = itr->next;
+			current->next = itr->next;
+			free(itr);
+			goto out_success;
+		}
+		itr = itr->next;
+	}
+out_failure:
+	return 0;
+out_success:
+	return 1;
+
+}
+
 void erase(struct node **ptr_head)
 {
 	struct node *current;
@@ -172,9 +200,23 @@ int main(int argc, char *argv[])
 	push(&head, 4);
 	push(&head, 6);
 	push(&head, 12);
+	push(&head, 5);
+	push(&head, 9);
+	push(&head, 2);
 
 	/* print entire list */
 	print(head);
+	
+	/* delete */
+	delete(&head, 0);
+
+	printf("\n");
+	
+	/* print entire list */
+	print(head);
+
+	return 0;
+	
 	
 	/* top */
 	int t;
