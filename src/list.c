@@ -42,7 +42,7 @@ out:
 	return new_node;
 }
 
-int is_empty(struct node *head)
+static inline int is_empty(struct node *head)
 {
 	return head == NULL;
 }
