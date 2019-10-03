@@ -4,29 +4,10 @@
  * Description: data structure to store a linked list.
  */
 
-/*
- * create_node
- * push
- * append
- * is_empty
- * pop
- * top
- * reverse
- * print
- * erase   erase entire list
- * lenght
- * delete  delete given node
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-struct node
-{
-	int data;
-	struct node *prev, *next;
-};
+#include "list.h"
 
 struct node *create_node(int data)
 {
@@ -42,12 +23,12 @@ out:
 	return new_node;
 }
 
-static inline int is_empty(struct node *head)
+int is_empty(struct node *head)
 {
 	return head == NULL;
 }
 
-static void push(struct node **ptr_head, int data)
+void push(struct node **ptr_head, int data)
 {
 	struct node *new_node = create_node(data);
 	struct node *current;
