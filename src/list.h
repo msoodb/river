@@ -1,35 +1,26 @@
 #ifndef LIST_H
 #define LIST_H
 
-struct element
-{
-	int id;
-	char *name;
-	char *lastname;
-	char *addres;
-	int status;
-};
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct node
 {
-	struct element *data;
-	struct node *prev;
-	struct node *next;
-	
+	int data;
+	struct node *prev, *next;
 };
 
-struct element* create_element(int id, char *name, char *lastname,
-			       char *addres, int status);
-void print_elemtn_header();
-void print_element(struct element *data);
-void push(struct node **ptrhead, struct element *data);
-struct element* pop(struct node **ptrhead);
-void reverse(struct node **ptrhead);
-void save(struct node *head, char *file);
-void print(struct node *ptrhead);
-void print_recursive_data(struct node *ptrhead);
-void print_recursive(struct node *ptrhead);
-void init(struct node **ptrhead);
-void free_list(struct node **ptrhead);
+struct node *create_node(int data);
+int is_empty(struct node *head);
+void push(struct node **ptr_head, int data);
+void append(struct node **ptr_head, int data);
+void pop(struct node **ptr_head, int *data);
+int top(struct node *head, int *data);
+void reverse(struct node **ptr_head);
+int delete (struct node **ptr_head, int location);
+void erase(struct node **ptr_head);
+int lenght(struct node *head);
+void print(struct node *head);
 
 #endif //LIST_H
